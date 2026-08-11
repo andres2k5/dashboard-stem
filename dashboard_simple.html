@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard STEM Madurez</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(to right, #0066cc, #003d99);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .control-group label {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #333;
+            text-transform: uppercase;
+        }
+        .control-group select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: #f9f9f9;
+            border-left: 4px solid #0066cc;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .card h3 {
+            margin: 0 0 15px 0;
+            color: #0066cc;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        .card p {
+            margin: 10px 0;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #555;
+        }
+        .score-display {
+            font-size: 36px;
+            font-weight: bold;
+            color: #0066cc;
+            margin: 15px 0;
+        }
+        .dimensions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .dimension {
+            background: white;
+            padding: 12px;
+            border-radius: 5px;
+            border-left: 3px solid #0066cc;
+        }
+        .dimension-name {
+            font-size: 11px;
+            font-weight: bold;
+            color: #0066cc;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .dimension-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #0066cc;
+            width: 50%;
+        }
+        .table-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .table-section h2 {
+            margin: 0 0 20px 0;
+            color: #333;
+            font-size: 18px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        th {
+            background: #0066cc;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+        }
+        tr:hover {
+            background: #f0f0f0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .badge.consolidacion {
+            background: #90EE90;
+            color: #2D5016;
+        }
+        .badge.crecimiento {
+            background: #FFB88C;
+            color: #7A3E00;
+        }
+        .badge.expansion {
+            background: #00CED1;
+            color: #00405A;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #999;
+        }
+        @media (max-width: 768px) {
+            .controls { grid-template-columns: 1fr; }
+            .content { grid-template-columns: 1fr; }
+            .dimensions-grid { grid-template-columns: 1fr; }
+            table { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Dashboard Modelo de Madurez Territorios STEM</h1>
+            <p>Diagnostico de Capacidades para Innovacion Educativa</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Selecciona Territorio</label>
+                <select id="territorySelect" onchange="updateDashboard()">
+                    <option value="1">Queretaro</option>
+                    <option value="2">Tlaxcala</option>
+                    <option value="3">Valparaiso</option>
+                    <option value="4">Medellin</option>
+                    <option value="5">Bogota</option>
+                    <option value="6">Cali</option>
+                    <option value="7">Cartagena</option>
+                    <option value="8">Santa Marta</option>
+                    <option value="9">Barranquilla</option>
+                    <option value="10">Bucaramanga</option>
+                    <option value="11">Cucuta</option>
+                    <option value="12">Pereira</option>
+                    <option value="13">Armenia</option>
+                    <option value="14">Manizales</option>
+                    <option value="15">Ibague</option>
+                    <option value="16">Neiva</option>
+                    <option value="17">Pasto</option>
+                    <option value="18">Popayan</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Organizacion</label>
+                <input type="text" id="organizationDisplay" disabled style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+            <div class="control-group">
+                <label>Ultima Actualizacion</label>
+                <input type="text" id="dateDisplay" disabled style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+        </div>
+
+        <div class="content">
+            <div>
+                <div class="card">
+                    <h3>Nivel de Madurez General</h3>
+                    <div class="score-display" id="maturityLevel">Consolidacion</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressBar" style="width: 50%;"></div>
+                    </div>
+                    <p style="text-align: center; margin: 10px 0; font-size: 12px; color: #666;">
+                        Puntaje: <strong id="scoreDisplay">52.02</strong>/100
+                    </p>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h3>Descripcion del Nivel</h3>
+                    <p id="levelDescription">Un territorio STEM en consolidacion da cuenta de procesos sistémicos de articulacion que han fortalecido el liderazgo colectivo.</p>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <h3>Puntajes por Dimension</h3>
+                    <div class="dimensions-grid">
+                        <div class="dimension">
+                            <div class="dimension-name">Vision</div>
+                            <div class="dimension-value" id="dim1">61.0</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="dim1-bar" style="width: 61%;"></div>
+                            </div>
+                        </div>
+                        <div class="dimension">
+                            <div class="dimension-name">Trabajo en Red</div>
+                            <div class="dimension-value" id="dim2">63.33</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="dim2-bar" style="width: 63.33%;"></div>
+                            </div>
+                        </div>
+                        <div class="dimension">
+                            <div class="dimension-name">Aprendizaje Colectivo</div>
+                            <div class="dimension-value" id="dim3">43.75</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="dim3-bar" style="width: 43.75%;"></div>
+                            </div>
+                        </div>
+                        <div class="dimension">
+                            <div class="dimension-name">Impacto</div>
+                            <div class="dimension-value" id="dim4">40.0</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="dim4-bar" style="width: 40%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <h2>Comparativa de Todos los Territorios</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Territorio</th>
+                        <th>Vision</th>
+                        <th>Red</th>
+                        <th>Aprendizaje</th>
+                        <th>Impacto</th>
+                        <th>Puntaje</th>
+                        <th>Nivel</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>Dashboard STEM - Modelo de Madurez Territorios | Red STEM Latinoamerica</p>
+        </div>
+    </div>
+
+    <script>
+        const territories = [
+            { id: 1, name: 'Queretaro', org: 'Secretaria de Educacion de Queretaro', scores: { v: 61, r: 63.33, a: 43.75, i: 40 }, general: 52.02, level: 'Consolidacion' },
+            { id: 2, name: 'Tlaxcala', org: 'Secretaria de Educacion de Tlaxcala', scores: { v: 69, r: 70, a: 56.25, i: 60 }, general: 63.81, level: 'Consolidacion' },
+            { id: 3, name: 'Valparaiso', org: 'Ministerio de Educacion de Chile', scores: { v: 44, r: 45, a: 31.25, i: 36 }, general: 39.06, level: 'Crecimiento' },
+            { id: 4, name: 'Medellin', org: 'Alcaldia de Medellin', scores: { v: 72, r: 68.33, a: 65.75, i: 62 }, general: 67.02, level: 'Consolidacion' },
+            { id: 5, name: 'Bogota', org: 'Secretaria de Educacion Distrital', scores: { v: 55, r: 58.33, a: 48.75, i: 45 }, general: 51.77, level: 'Crecimiento' },
+            { id: 6, name: 'Cali', org: 'Secretaria de Educacion de Cali', scores: { v: 58, r: 60, a: 52.5, i: 50 }, general: 55.13, level: 'Consolidacion' },
+            { id: 7, name: 'Cartagena', org: 'Secretaria de Educacion de Cartagena', scores: { v: 48, r: 50, a: 40, i: 42 }, general: 45, level: 'Crecimiento' },
+            { id: 8, name: 'Santa Marta', org: 'Secretaria de Educacion de Santa Marta', scores: { v: 50, r: 52, a: 43.75, i: 45 }, general: 47.69, level: 'Crecimiento' },
+            { id: 9, name: 'Barranquilla', org: 'Secretaria de Educacion de Barranquilla', scores: { v: 52, r: 55, a: 45, i: 48 }, general: 50, level: 'Crecimiento' },
+            { id: 10, name: 'Bucaramanga', org: 'Secretaria de Educacion de Bucaramanga', scores: { v: 60, r: 62, a: 50, i: 55 }, general: 56.75, level: 'Consolidacion' },
+            { id: 11, name: 'Cucuta', org: 'Secretaria de Educacion de Cucuta', scores: { v: 45, r: 48, a: 38.75, i: 40 }, general: 42.94, level: 'Crecimiento' },
+            { id: 12, name: 'Pereira', org: 'Secretaria de Educacion de Pereira', scores: { v: 55, r: 57, a: 47.5, i: 50 }, general: 52.38, level: 'Consolidacion' },
+            { id: 13, name: 'Armenia', org: 'Secretaria de Educacion de Armenia', scores: { v: 52, r: 54, a: 44, i: 47 }, general: 49.25, level: 'Crecimiento' },
+            { id: 14, name: 'Manizales', org: 'Secretaria de Educacion de Manizales', scores: { v: 56, r: 58, a: 48.75, i: 52 }, general: 53.69, level: 'Consolidacion' },
+            { id: 15, name: 'Ibague', org: 'Secretaria de Educacion de Ibague', scores: { v: 50, r: 52, a: 42.5, i: 46 }, general: 47.63, level: 'Crecimiento' },
+            { id: 16, name: 'Neiva', org: 'Secretaria de Educacion de Neiva', scores: { v: 48, r: 50, a: 40, i: 44 }, general: 45.5, level: 'Crecimiento' },
+            { id: 17, name: 'Pasto', org: 'Secretaria de Educacion de Pasto', scores: { v: 52, r: 54, a: 45, i: 48 }, general: 49.75, level: 'Crecimiento' },
+            { id: 18, name: 'Popayan', org: 'Secretaria de Educacion de Popayan', scores: { v: 54, r: 56, a: 46.25, i: 50 }, general: 51.56, level: 'Consolidacion' }
+        ];
+
+        const descriptions = {
+            'Temprana': 'La etapa temprana es el nivel inicial de un territorio STEM. Se evidencia la existencia de elementos basicos de vision y se inician procesos de articulacion informal entre actores.',
+            'Crecimiento': 'Un territorio STEM en crecimiento evidencia el fortalecimiento gradual de capacidades. Existen procesos articulados de forma mas estructurada.',
+            'Consolidacion': 'Un territorio STEM en consolidacion da cuenta de procesos sistemicos de articulacion que han fortalecido el liderazgo colectivo. Se evidencia una amplia variedad de redes y actores.',
+            'Expansion': 'Un territorio STEM en expansion ha logrado transformar su accionar territorial. Posee una alta capacidad de autogestin e influencia en politicas publicas.'
+        };
+
+        function updateDashboard() {
+            const selected = document.getElementById('territorySelect').value;
+            const territory = territories.find(t => t.id == selected);
+
+            if (!territory) return;
+
+            document.getElementById('organizationDisplay').value = territory.org;
+            document.getElementById('dateDisplay').value = new Date().toLocaleDateString('es-ES');
+            document.getElementById('maturityLevel').textContent = territory.level;
+            document.getElementById('scoreDisplay').textContent = territory.general.toFixed(2);
+            document.getElementById('progressBar').style.width = territory.general + '%';
+            document.getElementById('levelDescription').textContent = descriptions[territory.level] || '';
+
+            document.getElementById('dim1').textContent = territory.scores.v.toFixed(2);
+            document.getElementById('dim1-bar').style.width = territory.scores.v + '%';
+            document.getElementById('dim2').textContent = territory.scores.r.toFixed(2);
+            document.getElementById('dim2-bar').style.width = territory.scores.r + '%';
+            document.getElementById('dim3').textContent = territory.scores.a.toFixed(2);
+            document.getElementById('dim3-bar').style.width = territory.scores.a + '%';
+            document.getElementById('dim4').textContent = territory.scores.i.toFixed(2);
+            document.getElementById('dim4-bar').style.width = territory.scores.i + '%';
+        }
+
+        function populateTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            territories.forEach(t => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${t.name}</strong></td>
+                    <td>${t.scores.v.toFixed(1)}</td>
+                    <td>${t.scores.r.toFixed(1)}</td>
+                    <td>${t.scores.a.toFixed(1)}</td>
+                    <td>${t.scores.i.toFixed(1)}</td>
+                    <td><strong>${t.general.toFixed(1)}</strong></td>
+                    <td><span class="badge ${t.level.toLowerCase()}">${t.level}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        window.onload = function() {
+            populateTable();
+            updateDashboard();
+        };
+    </script>
+</body>
+</html>
