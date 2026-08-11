@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Modelo de Madurez Territorios STEM+</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0066cc 0%, #003d99 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            padding: 25px 30px;
+            border-bottom: 1px solid #e0e0e0;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            align-items: end;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .control-group select {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-group select:hover {
+            border-color: #0066cc;
+        }
+
+        .control-group select:focus {
+            outline: none;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .content-section {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .chart-container {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            position: relative;
+            min-height: 400px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .radar-canvas {
+            max-height: 350px;
+        }
+
+        .info-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f7 100%);
+            border-left: 4px solid #0066cc;
+            padding: 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .info-card.crecimiento {
+            border-left-color: #FFB88C;
+        }
+
+        .info-card.consolidacion {
+            border-left-color: #90EE90;
+        }
+
+        .info-card.expansion {
+            border-left-color: #00CED1;
+        }
+
+        .info-card.temprana {
+            border-left-color: #FFDDC1;
+        }
+
+        .info-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0066cc;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-card p {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .dimension-scores {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .dimension-item {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #0066cc;
+        }
+
+        .dimension-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #0066cc;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .dimension-score {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .dimension-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .dimension-bar-fill {
+            height: 100%;
+            background: #0066cc;
+            transition: width 0.3s ease;
+        }
+
+        .table-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        th {
+            background: #0066cc;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .maturity-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .maturity-badge.temprana {
+            background: #FFDDC1;
+            color: #8B4513;
+        }
+
+        .maturity-badge.crecimiento {
+            background: #FFB88C;
+            color: #7A3E00;
+        }
+
+        .maturity-badge.consolidacion {
+            background: #90EE90;
+            color: #2D5016;
+        }
+
+        .maturity-badge.expansion {
+            background: #00CED1;
+            color: #00405A;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: #0066cc;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px;
+            font-size: 14px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            font-size: 11px;
+            color: #999;
+        }
+
+        .footer a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1024px) {
+            .controls-section {
+                grid-template-columns: 1fr;
+            }
+            .content-section {
+                grid-template-columns: 1fr;
+            }
+            .dimension-scores {
+                grid-template-columns: 1fr;
+            }
+            table {
+                font-size: 12px;
+            }
+            td, th {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            .controls-section {
+                padding: 15px;
+            }
+            .content-section {
+                padding: 15px;
+                gap: 15px;
+            }
+            .table-section {
+                padding: 15px;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // Datos de ejemplo (normalmente vendrían de una API)
+        const SAMPLE_DATA = {
+            "metadata": {
+                "last_updated": new Date().toISOString(),
+                "version": "1.0",
+                "model_version": "Modelo de Madurez Territorios STEM+ 2025"
+            },
+            "dimensions": {
+                "1. Visión": {
+                    "id": 1,
+                    "name": "Visión",
+                    "color": "#FF6B6B",
+                    "domains": ["Horizonte", "Política Pública", "Planeación", "Comunicación"]
+                },
+                "2. Trabajo en Red": {
+                    "id": 2,
+                    "name": "Trabajo en Red",
+                    "color": "#4ECDC4",
+                    "domains": ["Sostenibilidad", "Gobernanza", "Cooperación"]
+                },
+                "3. Aprendizaje Colectivo": {
+                    "id": 3,
+                    "name": "Aprendizaje Colectivo",
+                    "color": "#FFD93D",
+                    "domains": ["Comunidades y Redes", "Formación", "Prácticas y Experiencias", "Ambientes de Aprendizaje"]
+                },
+                "4. Impacto": {
+                    "id": 4,
+                    "name": "Impacto",
+                    "color": "#6BCB77",
+                    "domains": ["Gestión de conocimiento", "Monitoreo", "Evaluación"]
+                }
+            },
+            "territories": [
+                {
+                    "id": 1,
+                    "name": "SABANETA",
+                    "organization": "Secretaría de Educación",
+                    "dimension_scores": {
+                        "1. Visión": 61,
+                        "2. Trabajo en Red": 63.33,
+                        "3. Aprendizaje Colectivo": 43.75,
+                        "4. Impacto": 40
+                    },
+                    "general_score": 52.02,
+                    "maturity_level": "Consolidación"
+                },
+                {
+                    "id": 2,
+                    "name": "MEDELLÍN",
+                    "organization": "Alcaldía Municipal",
+                    "dimension_scores": {
+                        "1. Visión": 72,
+                        "2. Trabajo en Red": 68.33,
+                        "3. Aprendizaje Colectivo": 65.75,
+                        "4. Impacto": 62
+                    },
+                    "general_score": 67.02,
+                    "maturity_level": "Consolidación"
+                },
+                {
+                    "id": 3,
+                    "name": "BOGOTÁ",
+                    "organization": "Secretaría de Educación",
+                    "dimension_scores": {
+                        "1. Visión": 55,
+                        "2. Trabajo en Red": 58.33,
+                        "3. Aprendizaje Colectivo": 48.75,
+                        "4. Impacto": 45
+                    },
+                    "general_score": 51.77,
+                    "maturity_level": "Crecimiento"
+                }
+            ]
+        };
+
+        const MATURITY_DESCRIPTIONS = {
+            "Temprana": "La etapa temprana es el nivel inicial de un territorio STEM+. Se evidencia la existencia de elementos básicos de visión y se inician procesos de articulación informal entre actores. Es una fase de construcción de base para futuras iniciativas.",
+            "Crecimiento": "Un territorio STEM+ en crecimiento evidencia el fortalecimiento gradual de capacidades. Existen procesos articulados de forma más estructurada, se amplía la participación de actores y se avanza en la implementación de estrategias iniciales.",
+            "Consolidación": "Un territorio STEM+ en consolidación da cuenta de procesos sistémicos de articulación que han fortalecido el liderazgo colectivo. Se evidencia una amplia variedad de redes, actores e iniciativas que enriquecen la agenda del territorio.",
+            "Expansión": "Un territorio STEM+ en expansión ha logrado transformar su accionar territorial. Posee una alta capacidad de autogestión, influencia en políticas públicas y genera replicabilidad de iniciativas en otros contextos."
+        };
+
+        function STEMDashboard() {
+            const [data, setData] = React.useState(SAMPLE_DATA);
+            const [selectedTerritory, setSelectedTerritory] = React.useState('1');
+            const [chartRef, setChartRef] = React.useState(null);
+            const [chartInstance, setChartInstance] = React.useState(null);
+
+            const currentTerritory = React.useMemo(() => {
+                return data.territories.find(t => t.id.toString() === selectedTerritory) || data.territories[0];
+            }, [selectedTerritory, data]);
+
+            // Cargar datos desde JSON externo si está disponible
+            React.useEffect(() => {
+                async function loadExternalData() {
+                    try {
+                        const response = await fetch('dashboard_data.json');
+                        if (response.ok) {
+                            const externalData = await response.json();
+                            setData(externalData);
+                        }
+                    } catch (e) {
+                        console.log('Usando datos de ejemplo. Para datos reales, añade dashboard_data.json');
+                    }
+                }
+                loadExternalData();
+            }, []);
+
+            // Actualizar gráfico cuando cambia el territorio
+            React.useEffect(() => {
+                if (!chartRef) return;
+
+                const ctx = chartRef.getContext('2d');
+                const dimensionNames = Object.keys(currentTerritory.dimension_scores)
+                    .sort()
+                    .map(key => key.split('. ')[1]);
+                
+                const scores = Object.keys(currentTerritory.dimension_scores)
+                    .sort()
+                    .map(key => currentTerritory.dimension_scores[key]);
+
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+
+                const newChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: dimensionNames,
+                        datasets: [{
+                            label: currentTerritory.name,
+                            data: scores,
+                            borderColor: '#0066cc',
+                            backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                            borderWidth: 2,
+                            pointRadius: 5,
+                            pointBackgroundColor: '#0066cc',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            tension: 0.2,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    stepSize: 25,
+                                    font: { size: 11 }
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                },
+                                pointLabels: {
+                                    font: { size: 12, weight: 'bold' },
+                                    color: '#333'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return Math.round(context.parsed.r) + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                setChartInstance(newChart);
+
+                return () => {
+                    if (newChart) newChart.destroy();
+                };
+            }, [chartRef, currentTerritory, chartInstance]);
+
+            const getLevelClass = (level) => {
+                return level.toLowerCase().replace(/\s+/g, '');
+            };
+
+            return (
+                <div className="dashboard-container">
+                    <div className="header">
+                        <div className="header-logo">
+                            <span style={{ fontSize: '28px' }}>🎓</span>
+                        </div>
+                        <h1>Modelo de Madurez Territorios STEM+</h1>
+                        <p>Diagnóstico de Capacidades para Innovación Educativa</p>
+                    </div>
+
+                    <div className="controls-section">
+                        <div className="control-group">
+                            <label>Territorio STEM+</label>
+                            <select 
+                                value={selectedTerritory} 
+                                onChange={(e) => setSelectedTerritory(e.target.value)}
+                            >
+                                {data.territories.map(territory => (
+                                    <option key={territory.id} value={territory.id}>
+                                        {territory.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="control-group">
+                            <label>Organización</label>
+                            <select disabled>
+                                <option>{currentTerritory.organization}</option>
+                            </select>
+                        </div>
+
+                        <div className="control-group">
+                            <label>Última Actualización</label>
+                            <select disabled>
+                                <option>
+                                    {new Date(data.metadata.last_updated).toLocaleDateString('es-ES')}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="content-section">
+                        <div className="chart-container">
+                            <div className="chart-title">Mapa de Madurez del Territorio</div>
+                            <canvas 
+                                ref={el => setChartRef(el)} 
+                                className="radar-canvas"
+                            ></canvas>
+                        </div>
+
+                        <div className="info-panel">
+                            <div className={`info-card ${getLevelClass(currentTerritory.maturity_level)}`}>
+                                <h3>Nivel de Madurez General</h3>
+                                <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#0066cc', margin: '10px 0' }}>
+                                    {currentTerritory.maturity_level}
+                                </p>
+                                <div style={{ 
+                                    width: '100%', 
+                                    height: '8px', 
+                                    background: '#e0e0e0', 
+                                    borderRadius: '4px', 
+                                    overflow: 'hidden',
+                                    marginBottom: '12px'
+                                }}>
+                                    <div style={{
+                                        width: currentTerritory.general_score + '%',
+                                        height: '100%',
+                                        background: '#0066cc',
+                                        transition: 'width 0.3s ease'
+                                    }}></div>
+                                </div>
+                                <p style={{ fontSize: '12px', color: '#666' }}>
+                                    Puntaje: {currentTerritory.general_score.toFixed(1)}/100
+                                </p>
+                            </div>
+
+                            <div className="info-card">
+                                <h3>¿Qué significa este nivel?</h3>
+                                <p>{MATURITY_DESCRIPTIONS[currentTerritory.maturity_level]}</p>
+                            </div>
+
+                            <div className="info-card">
+                                <h3>Nivel de Madurez por Dimensión</h3>
+                                <div className="dimension-scores">
+                                    {Object.entries(currentTerritory.dimension_scores)
+                                        .sort()
+                                        .map(([dim, score]) => (
+                                            <div key={dim} className="dimension-item">
+                                                <div className="dimension-name">{dim.split('. ')[1]}</div>
+                                                <div className="dimension-score">{score.toFixed(1)}</div>
+                                                <div className="dimension-bar">
+                                                    <div 
+                                                        className="dimension-bar-fill"
+                                                        style={{ width: score + '%' }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="table-section">
+                        <div className="table-title">Comparativa de Territorios</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Territorio</th>
+                                    <th>Organización</th>
+                                    <th>Visión</th>
+                                    <th>Trabajo en Red</th>
+                                    <th>Aprendizaje Colectivo</th>
+                                    <th>Impacto</th>
+                                    <th>Puntaje General</th>
+                                    <th>Nivel</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data.territories.map(territory => (
+                                    <tr key={territory.id}>
+                                        <td><strong>{territory.name}</strong></td>
+                                        <td>{territory.organization}</td>
+                                        <td>{territory.dimension_scores['1. Visión'].toFixed(1)}</td>
+                                        <td>{territory.dimension_scores['2. Trabajo en Red'].toFixed(1)}</td>
+                                        <td>{territory.dimension_scores['3. Aprendizaje Colectivo'].toFixed(1)}</td>
+                                        <td>{territory.dimension_scores['4. Impacto'].toFixed(1)}</td>
+                                        <td><strong>{territory.general_score.toFixed(1)}</strong></td>
+                                        <td>
+                                            <span className={`maturity-badge ${getLevelClass(territory.maturity_level)}`}>
+                                                {territory.maturity_level}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="footer">
+                        <p>
+                            Dashboard Modelo de Madurez Territorios STEM+ | 
+                            <a href="https://educacion.stem.siemens-stiftung.org/red-stem-latinoamerica/" target="_blank" rel="noopener noreferrer">
+                                Red STEM Latinoamérica
+                            </a> | 
+                            {new Date(data.metadata.last_updated).toLocaleDateString('es-ES', { 
+                                weekday: 'long', 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            })}
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<STEMDashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>

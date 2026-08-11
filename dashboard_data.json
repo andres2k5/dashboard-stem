@@ -1,0 +1,266 @@
+{
+  "metadata": {
+    "last_updated": "2026-08-11T19:10:35.058064",
+    "version": "1.0",
+    "model_version": "Modelo de Madurez Territorios STEM+ 2025",
+    "territories_count": 18
+  },
+  "dimensions": {
+    "1. Visión": {
+      "id": 1,
+      "name": "Visión",
+      "color": "#FF6B6B"
+    },
+    "2. Trabajo en Red": {
+      "id": 2,
+      "name": "Trabajo en Red",
+      "color": "#4ECDC4"
+    },
+    "3. Aprendizaje Colectivo": {
+      "id": 3,
+      "name": "Aprendizaje Colectivo",
+      "color": "#FFD93D"
+    },
+    "4. Impacto": {
+      "id": 4,
+      "name": "Impacto",
+      "color": "#6BCB77"
+    }
+  },
+  "territories": [
+    {
+      "id": 1,
+      "name": "Querétaro",
+      "organization": "Secretaría de Educación de Querétaro",
+      "dimension_scores": {
+        "1. Visión": 61.0,
+        "2. Trabajo en Red": 63.33,
+        "3. Aprendizaje Colectivo": 43.75,
+        "4. Impacto": 40.0
+      },
+      "general_score": 52.02,
+      "maturity_level": "Consolidación"
+    },
+    {
+      "id": 2,
+      "name": "Tlaxcala",
+      "organization": "Seceretaría de Educación del Estado de Tlaxcala",
+      "dimension_scores": {
+        "1. Visión": 69.0,
+        "2. Trabajo en Red": 70.0,
+        "3. Aprendizaje Colectivo": 77.5,
+        "4. Impacto": 50.0
+      },
+      "general_score": 66.62,
+      "maturity_level": "Consolidación"
+    },
+    {
+      "id": 3,
+      "name": "Valparaíso",
+      "organization": "Pontificia Universidad Católica de Valparaíso",
+      "dimension_scores": {
+        "1. Visión": 53.0,
+        "2. Trabajo en Red": 43.33,
+        "3. Aprendizaje Colectivo": 23.75,
+        "4. Impacto": 35.0
+      },
+      "general_score": 38.77,
+      "maturity_level": "Crecimiento"
+    },
+    {
+      "id": 4,
+      "name": "Medellín",
+      "organization": "MOVA - Centro de Innovación del maestro",
+      "dimension_scores": {
+        "1. Visión": 74.0,
+        "2. Trabajo en Red": 48.33,
+        "3. Aprendizaje Colectivo": 31.25,
+        "4. Impacto": 27.5
+      },
+      "general_score": 45.27,
+      "maturity_level": "Crecimiento"
+    },
+    {
+      "id": 5,
+      "name": "Santa Cruz de la Sierra",
+      "organization": "Universidad Privada Franz Tamayo",
+      "dimension_scores": {
+        "1. Visión": 37.0,
+        "2. Trabajo en Red": 35.0,
+        "3. Aprendizaje Colectivo": 27.5,
+        "4. Impacto": 22.5
+      },
+      "general_score": 30.5,
+      "maturity_level": "Crecimiento"
+    },
+    {
+      "id": 6,
+      "name": "Territorio STEM Arequipa",
+      "organization": "Gerencia Regional de Educación Arequipa",
+      "dimension_scores": {
+        "1. Visión": 32.0,
+        "2. Trabajo en Red": 50.0,
+        "3. Aprendizaje Colectivo": 23.75,
+        "4. Impacto": 17.5
+      },
+      "general_score": 30.81,
+      "maturity_level": "Crecimiento"
+    },
+    {
+      "id": 7,
+      "name": "Lima",
+      "organization": "DRELM",
+      "dimension_scores": {
+        "1. Visión": 39.0,
+        "2. Trabajo en Red": 58.33,
+        "3. Aprendizaje Colectivo": 57.5,
+        "4. Impacto": 30.0
+      },
+      "general_score": 46.21,
+      "maturity_level": "Crecimiento"
+    },
+    {
+      "id": 8,
+      "name": "Vicente Lopez",
+      "organization": "Secretaría de Educación del Municipio de Vicente Lopez",
+      "dimension_scores": {
+        "1. Visión": 47.0,
+        "2. Trabajo en Red": 40.0,
+        "3. Aprendizaje Colectivo": 60.0,
+        "4. Impacto": 35.0
+      },
+      "general_score": 45.5,
+      "maturity_level": "Crecimiento"
+    },
+    {
+      "id": 9,
+      "name": "Itagüí",
+      "organization": "Secretaría de Educación",
+      "dimension_scores": {
+        "1. Visión": 34.0,
+        "2. Trabajo en Red": 51.67,
+        "3. Aprendizaje Colectivo": 42.5,
+        "4. Impacto": 22.5
+      },
+      "general_score": 37.67,
+      "maturity_level": "Crecimiento"
+    },
+    {
+      "id": 10,
+      "name": "MINUTO DE DIOS",
+      "organization": "Minuto de Dios",
+      "dimension_scores": {
+        "1. Visión": 34.0,
+        "2. Trabajo en Red": 20.0,
+        "3. Aprendizaje Colectivo": 38.75,
+        "4. Impacto": 12.5
+      },
+      "general_score": 26.31,
+      "maturity_level": "Crecimiento"
+    },
+    {
+      "id": 11,
+      "name": "BAQSTEM+IS",
+      "organization": "Secretaria de Educación",
+      "dimension_scores": {
+        "1. Visión": 62.0,
+        "2. Trabajo en Red": 86.67,
+        "3. Aprendizaje Colectivo": 67.5,
+        "4. Impacto": 65.0
+      },
+      "general_score": 70.29,
+      "maturity_level": "Consolidación"
+    },
+    {
+      "id": 12,
+      "name": "Territorio STEM+ Cusco",
+      "organization": "Gerencia Regional de Educación de Cusco",
+      "dimension_scores": {
+        "1. Visión": 60.0,
+        "2. Trabajo en Red": 78.33,
+        "3. Aprendizaje Colectivo": 82.5,
+        "4. Impacto": 60.0
+      },
+      "general_score": 70.21,
+      "maturity_level": "Consolidación"
+    },
+    {
+      "id": 13,
+      "name": "Itagüí",
+      "organization": "San José Itagüí",
+      "dimension_scores": {
+        "1. Visión": 82.0,
+        "2. Trabajo en Red": 96.67,
+        "3. Aprendizaje Colectivo": 87.5,
+        "4. Impacto": 92.5
+      },
+      "general_score": 89.67,
+      "maturity_level": "Expansión"
+    },
+    {
+      "id": 14,
+      "name": "UGEL COTABAMBAS",
+      "organization": "UGEL COTABAMBAS",
+      "dimension_scores": {
+        "1. Visión": 69.0,
+        "2. Trabajo en Red": 53.33,
+        "3. Aprendizaje Colectivo": 50.0,
+        "4. Impacto": 22.5
+      },
+      "general_score": 48.71,
+      "maturity_level": "Crecimiento"
+    },
+    {
+      "id": 15,
+      "name": "PUEBLA, PUE. MEXICO",
+      "organization": "FACULTAD DE CIENCIAS DE LA ELECTRONICA DE LA BENEMERITA UNIVERSIDAD AUTONOMA DE PUEBLA",
+      "dimension_scores": {
+        "1. Visión": 73.0,
+        "2. Trabajo en Red": 95.0,
+        "3. Aprendizaje Colectivo": 95.0,
+        "4. Impacto": 77.5
+      },
+      "general_score": 85.12,
+      "maturity_level": "Expansión"
+    },
+    {
+      "id": 16,
+      "name": "San José Itagüí Antioquia Colombia",
+      "organization": "San José Itagüí Antioquia Colombia",
+      "dimension_scores": {
+        "1. Visión": 79.0,
+        "2. Trabajo en Red": 91.67,
+        "3. Aprendizaje Colectivo": 87.5,
+        "4. Impacto": 92.5
+      },
+      "general_score": 87.67,
+      "maturity_level": "Expansión"
+    },
+    {
+      "id": 17,
+      "name": "SEM Yumbo",
+      "organization": "Alcaldia de Yumbo",
+      "dimension_scores": {
+        "1. Visión": 63.0,
+        "2. Trabajo en Red": 48.33,
+        "3. Aprendizaje Colectivo": 41.25,
+        "4. Impacto": 22.5
+      },
+      "general_score": 43.77,
+      "maturity_level": "Crecimiento"
+    },
+    {
+      "id": 18,
+      "name": "SABANETA",
+      "organization": "Secretaría de Educación",
+      "dimension_scores": {
+        "1. Visión": 45.0,
+        "2. Trabajo en Red": 56.67,
+        "3. Aprendizaje Colectivo": 53.75,
+        "4. Impacto": 47.5
+      },
+      "general_score": 50.73,
+      "maturity_level": "Consolidación"
+    }
+  ]
+}
