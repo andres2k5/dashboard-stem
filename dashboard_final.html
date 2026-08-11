@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard STEM</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 20px; }
+        .dashboard-container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #0066cc 0%, #003d99 100%); color: white; padding: 40px 30px; text-align: center; }
+        .header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+        .header p { font-size: 14px; opacity: 0.95; }
+        .controls-section { background: #f8f9fa; padding: 25px 30px; border-bottom: 1px solid #e0e0e0; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: end; }
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        .control-group label { font-size: 12px; font-weight: 600; color: #333; text-transform: uppercase; }
+        .control-group select { padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background: white; cursor: pointer; }
+        .content-section { padding: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .chart-container { background: #f8f9fa; padding: 25px; border-radius: 10px; min-height: 400px; }
+        .chart-title { font-size: 16px; font-weight: 700; color: #333; margin-bottom: 20px; text-align: center; }
+        .info-panel { display: flex; flex-direction: column; gap: 20px; }
+        .info-card { background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f7 100%); border-left: 4px solid #0066cc; padding: 20px; border-radius: 8px; }
+        .info-card h3 { font-size: 14px; font-weight: 600; color: #0066cc; margin-bottom: 8px; text-transform: uppercase; }
+        .info-card p { font-size: 13px; line-height: 1.6; color: #555; }
+        .dimension-scores { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .dimension-item { background: white; padding: 12px; border-radius: 6px; border-left: 3px solid #0066cc; }
+        .dimension-name { font-size: 12px; font-weight: 600; color: #0066cc; text-transform: uppercase; margin-bottom: 4px; }
+        .dimension-score { font-size: 18px; font-weight: 700; color: #333; }
+        .dimension-bar { width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; margin-top: 4px; overflow: hidden; }
+        .dimension-bar-fill { height: 100%; background: #0066cc; }
+        .table-section { padding: 30px; background: #f8f9fa; border-top: 1px solid #e0e0e0; }
+        .table-title { font-size: 18px; font-weight: 700; color: #333; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
+        th { background: #0066cc; color: white; padding: 15px; text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; }
+        td { padding: 12px 15px; border-bottom: 1px solid #e0e0e0; font-size: 13px; }
+        tr:hover { background: #f8f9fa; }
+        .maturity-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .maturity-badge.consolidacion { background: #90EE90; color: #2D5016; }
+        .maturity-badge.crecimiento { background: #FFB88C; color: #7A3E00; }
+        .maturity-badge.expansion { background: #00CED1; color: #00405A; }
+        .footer { background: #f8f9fa; padding: 20px 30px; text-align: center; border-top: 1px solid #e0e0e0; font-size: 11px; color: #999; }
+        @media (max-width: 1024px) { .controls-section { grid-template-columns: 1fr; } .content-section { grid-template-columns: 1fr; } .dimension-scores { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const DASHBOARD_DATA = {
+            metadata: {
+                last_updated: new Date().toISOString(),
+                territories_count: 18
+            },
+            territories: [
+                { id: 1, name: 'Queretaro', organization: 'Secretaria de Educacion de Queretaro', dimension_scores: { '1. Vision': 61, '2. Trabajo en Red': 63.33, '3. Aprendizaje Colectivo': 43.75, '4. Impacto': 40 }, general_score: 52.02, maturity_level: 'Consolidacion' },
+                { id: 2, name: 'Tlaxcala', organization: 'Secretaria de Educacion de Tlaxcala', dimension_scores: { '1. Vision': 69, '2. Trabajo en Red': 70, '3. Aprendizaje Colectivo': 56.25, '4. Impacto': 60 }, general_score: 63.81, maturity_level: 'Consolidacion' },
+                { id: 3, name: 'Valparaiso', organization: 'Ministerio de Educacion de Chile', dimension_scores: { '1. Vision': 44, '2. Trabajo en Red': 45, '3. Aprendizaje Colectivo': 31.25, '4. Impacto': 36 }, general_score: 39.06, maturity_level: 'Crecimiento' },
+                { id: 4, name: 'Medellin', organization: 'Alcaldia de Medellin', dimension_scores: { '1. Vision': 72, '2. Trabajo en Red': 68.33, '3. Aprendizaje Colectivo': 65.75, '4. Impacto': 62 }, general_score: 67.02, maturity_level: 'Consolidacion' },
+                { id: 5, name: 'Bogota', organization: 'Secretaria de Educacion Distrital', dimension_scores: { '1. Vision': 55, '2. Trabajo en Red': 58.33, '3. Aprendizaje Colectivo': 48.75, '4. Impacto': 45 }, general_score: 51.77, maturity_level: 'Crecimiento' },
+                { id: 6, name: 'Cali', organization: 'Secretaria de Educacion de Cali', dimension_scores: { '1. Vision': 58, '2. Trabajo en Red': 60, '3. Aprendizaje Colectivo': 52.5, '4. Impacto': 50 }, general_score: 55.13, maturity_level: 'Consolidacion' },
+                { id: 7, name: 'Cartagena', organization: 'Secretaria de Educacion de Cartagena', dimension_scores: { '1. Vision': 48, '2. Trabajo en Red': 50, '3. Aprendizaje Colectivo': 40, '4. Impacto': 42 }, general_score: 45, maturity_level: 'Crecimiento' },
+                { id: 8, name: 'Santa Marta', organization: 'Secretaria de Educacion de Santa Marta', dimension_scores: { '1. Vision': 50, '2. Trabajo en Red': 52, '3. Aprendizaje Colectivo': 43.75, '4. Impacto': 45 }, general_score: 47.69, maturity_level: 'Crecimiento' },
+                { id: 9, name: 'Barranquilla', organization: 'Secretaria de Educacion de Barranquilla', dimension_scores: { '1. Vision': 52, '2. Trabajo en Red': 55, '3. Aprendizaje Colectivo': 45, '4. Impacto': 48 }, general_score: 50, maturity_level: 'Crecimiento' },
+                { id: 10, name: 'Bucaramanga', organization: 'Secretaria de Educacion de Bucaramanga', dimension_scores: { '1. Vision': 60, '2. Trabajo en Red': 62, '3. Aprendizaje Colectivo': 50, '4. Impacto': 55 }, general_score: 56.75, maturity_level: 'Consolidacion' },
+                { id: 11, name: 'Cucuta', organization: 'Secretaria de Educacion de Cucuta', dimension_scores: { '1. Vision': 45, '2. Trabajo en Red': 48, '3. Aprendizaje Colectivo': 38.75, '4. Impacto': 40 }, general_score: 42.94, maturity_level: 'Crecimiento' },
+                { id: 12, name: 'Pereira', organization: 'Secretaria de Educacion de Pereira', dimension_scores: { '1. Vision': 55, '2. Trabajo en Red': 57, '3. Aprendizaje Colectivo': 47.5, '4. Impacto': 50 }, general_score: 52.38, maturity_level: 'Consolidacion' },
+                { id: 13, name: 'Armenia', organization: 'Secretaria de Educacion de Armenia', dimension_scores: { '1. Vision': 52, '2. Trabajo en Red': 54, '3. Aprendizaje Colectivo': 44, '4. Impacto': 47 }, general_score: 49.25, maturity_level: 'Crecimiento' },
+                { id: 14, name: 'Manizales', organization: 'Secretaria de Educacion de Manizales', dimension_scores: { '1. Vision': 56, '2. Trabajo en Red': 58, '3. Aprendizaje Colectivo': 48.75, '4. Impacto': 52 }, general_score: 53.69, maturity_level: 'Consolidacion' },
+                { id: 15, name: 'Ibague', organization: 'Secretaria de Educacion de Ibague', dimension_scores: { '1. Vision': 50, '2. Trabajo en Red': 52, '3. Aprendizaje Colectivo': 42.5, '4. Impacto': 46 }, general_score: 47.63, maturity_level: 'Crecimiento' },
+                { id: 16, name: 'Neiva', organization: 'Secretaria de Educacion de Neiva', dimension_scores: { '1. Vision': 48, '2. Trabajo en Red': 50, '3. Aprendizaje Colectivo': 40, '4. Impacto': 44 }, general_score: 45.5, maturity_level: 'Crecimiento' },
+                { id: 17, name: 'Pasto', organization: 'Secretaria de Educacion de Pasto', dimension_scores: { '1. Vision': 52, '2. Trabajo en Red': 54, '3. Aprendizaje Colectivo': 45, '4. Impacto': 48 }, general_score: 49.75, maturity_level: 'Crecimiento' },
+                { id: 18, name: 'Popayan', organization: 'Secretaria de Educacion de Popayan', dimension_scores: { '1. Vision': 54, '2. Trabajo en Red': 56, '3. Aprendizaje Colectivo': 46.25, '4. Impacto': 50 }, general_score: 51.56, maturity_level: 'Consolidacion' }
+            ]
+        };
+
+        function STEMDashboard() {
+            const [selectedTerritory, setSelectedTerritory] = React.useState('1');
+            const [chartRef, setChartRef] = React.useState(null);
+            const [chartInstance, setChartInstance] = React.useState(null);
+
+            const currentTerritory = DASHBOARD_DATA.territories.find(t => t.id.toString() === selectedTerritory) || DASHBOARD_DATA.territories[0];
+
+            React.useEffect(() => {
+                if (!chartRef) return;
+
+                const ctx = chartRef.getContext('2d');
+                const scores = [
+                    currentTerritory.dimension_scores['1. Vision'],
+                    currentTerritory.dimension_scores['2. Trabajo en Red'],
+                    currentTerritory.dimension_scores['3. Aprendizaje Colectivo'],
+                    currentTerritory.dimension_scores['4. Impacto']
+                ];
+
+                if (chartInstance) chartInstance.destroy();
+
+                const newChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Vision', 'Trabajo en Red', 'Aprendizaje Colectivo', 'Impacto'],
+                        datasets: [{
+                            label: currentTerritory.name,
+                            data: scores,
+                            borderColor: '#0066cc',
+                            backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                            borderWidth: 2,
+                            pointRadius: 5,
+                            pointBackgroundColor: '#0066cc',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            tension: 0.2,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: { stepSize: 25, font: { size: 11 } },
+                                grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                                pointLabels: { font: { size: 12, weight: 'bold' }, color: '#333' }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { callbacks: { label: (context) => Math.round(context.parsed.r) + '%' } }
+                        }
+                    }
+                });
+
+                setChartInstance(newChart);
+                return () => { if (newChart) newChart.destroy(); };
+            }, [chartRef, currentTerritory, chartInstance]);
+
+            return (
+                <div className="dashboard-container">
+                    <div className="header">
+                        <h1>Modelo de Madurez Territorios STEM</h1>
+                        <p>Diagnostico de Capacidades para Innovacion Educativa</p>
+                    </div>
+
+                    <div className="controls-section">
+                        <div className="control-group">
+                            <label>Territorio STEM</label>
+                            <select value={selectedTerritory} onChange={(e) => setSelectedTerritory(e.target.value)}>
+                                {DASHBOARD_DATA.territories.map(t => (
+                                    <option key={t.id} value={t.id}>{t.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="control-group">
+                            <label>Organizacion</label>
+                            <select disabled>
+                                <option>{currentTerritory.organization}</option>
+                            </select>
+                        </div>
+                        <div className="control-group">
+                            <label>Actualizacion</label>
+                            <select disabled>
+                                <option>{new Date().toLocaleDateString('es-ES')}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="content-section">
+                        <div className="chart-container">
+                            <div className="chart-title">Mapa de Madurez del Territorio</div>
+                            <canvas ref={el => setChartRef(el)}></canvas>
+                        </div>
+
+                        <div className="info-panel">
+                            <div className="info-card">
+                                <h3>Nivel de Madurez</h3>
+                                <p style={{fontSize: '24px', fontWeight: 'bold', color: '#0066cc', margin: '10px 0'}}>
+                                    {currentTerritory.maturity_level}
+                                </p>
+                                <div style={{width: '100%', height: '8px', background: '#e0e0e0', borderRadius: '4px', overflow: 'hidden', marginBottom: '12px'}}>
+                                    <div style={{width: currentTerritory.general_score + '%', height: '100%', background: '#0066cc'}}></div>
+                                </div>
+                                <p style={{fontSize: '12px', color: '#666'}}>Puntaje: {currentTerritory.general_score.toFixed(1)}/100</p>
+                            </div>
+
+                            <div className="info-card">
+                                <h3>Dimensiones</h3>
+                                <div className="dimension-scores">
+                                    <div className="dimension-item">
+                                        <div className="dimension-name">Vision</div>
+                                        <div className="dimension-score">{currentTerritory.dimension_scores['1. Vision'].toFixed(1)}</div>
+                                        <div className="dimension-bar">
+                                            <div className="dimension-bar-fill" style={{width: currentTerritory.dimension_scores['1. Vision'] + '%'}}></div>
+                                        </div>
+                                    </div>
+                                    <div className="dimension-item">
+                                        <div className="dimension-name">Trabajo Red</div>
+                                        <div className="dimension-score">{currentTerritory.dimension_scores['2. Trabajo en Red'].toFixed(1)}</div>
+                                        <div className="dimension-bar">
+                                            <div className="dimension-bar-fill" style={{width: currentTerritory.dimension_scores['2. Trabajo en Red'] + '%'}}></div>
+                                        </div>
+                                    </div>
+                                    <div className="dimension-item">
+                                        <div className="dimension-name">Aprendizaje</div>
+                                        <div className="dimension-score">{currentTerritory.dimension_scores['3. Aprendizaje Colectivo'].toFixed(1)}</div>
+                                        <div className="dimension-bar">
+                                            <div className="dimension-bar-fill" style={{width: currentTerritory.dimension_scores['3. Aprendizaje Colectivo'] + '%'}}></div>
+                                        </div>
+                                    </div>
+                                    <div className="dimension-item">
+                                        <div className="dimension-name">Impacto</div>
+                                        <div className="dimension-score">{currentTerritory.dimension_scores['4. Impacto'].toFixed(1)}</div>
+                                        <div className="dimension-bar">
+                                            <div className="dimension-bar-fill" style={{width: currentTerritory.dimension_scores['4. Impacto'] + '%'}}></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="table-section">
+                        <div className="table-title">Comparativa de Territorios</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Territorio</th>
+                                    <th>Vision</th>
+                                    <th>Red</th>
+                                    <th>Aprendizaje</th>
+                                    <th>Impacto</th>
+                                    <th>Puntaje</th>
+                                    <th>Nivel</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {DASHBOARD_DATA.territories.map(t => (
+                                    <tr key={t.id}>
+                                        <td><strong>{t.name}</strong></td>
+                                        <td>{t.dimension_scores['1. Vision'].toFixed(1)}</td>
+                                        <td>{t.dimension_scores['2. Trabajo en Red'].toFixed(1)}</td>
+                                        <td>{t.dimension_scores['3. Aprendizaje Colectivo'].toFixed(1)}</td>
+                                        <td>{t.dimension_scores['4. Impacto'].toFixed(1)}</td>
+                                        <td><strong>{t.general_score.toFixed(1)}</strong></td>
+                                        <td><span className={'maturity-badge ' + t.maturity_level.toLowerCase()}>{t.maturity_level}</span></td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="footer">
+                        <p>Dashboard Modelo de Madurez Territorios STEM - Red STEM Latinoamerica</p>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<STEMDashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>
